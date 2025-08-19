@@ -1,81 +1,73 @@
-import express from 'express';
-import EmployeesService from '../services/employeesService.js';
+const express = require('express');
+const employeesRepo = require('../repositories/employeesRepo');
+const shiftsRepo = require('../repositories/shiftsRepo');
 
 const router = express.Router();
 
-// Get All
-
+// GET /employees?departmentId=...
 router.get('/', async (req, res) => {
   try {
-    const filters = req.query;
-    const employees = await EmployeesService.getAllEmployees(filters);
-    res.status(200).json(employees);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-// get by department
-router.get('/by-department', async (req, res) => {
-  try {
-    const { departmentId } = req.query;
-    const employees = await EmployeesService.getEmployeesByDepartment(
-      departmentId
-    );
+    const filters = {};
+    if (req.query.departmentId) filters.departmentId = req.query.departmentId;
+    const employees = await employeesRepo.getAllEmployees(filters);
     res.json(employees);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
-// Get by id
-
+// GET /employees/:id
 router.get('/:id', async (req, res) => {
   try {
-    const { id } = req.params;
-    const employee = await EmployeesService.getById(id);
-    if (!employee) {
-      return res.status(404).json({ error: 'Employee not found' });
-    }
-    res.json(employee);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    const emp = await employeesRepo.getById(req.params.id);
+    if (!emp) return res.status(404).json({ error: 'Not found' });
+    res.json(emp);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
-// Add Employee
+// POST /employees
 router.post('/', async (req, res) => {
   try {
-    const obj = req.body;
-    const result = await EmployeesService.addEmployee(obj);
-    res.json(result);
-  } catch (error) {
-    res.status(500).json(error.message);
+    const created = await employeesRepo.addEmployee(req.body);
+    res.status(201).json(created);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
-//update employee
-
-router.patch('/:id', async (req, res) => {
+// PUT /employees/:id
+router.put('/:id', async (req, res) => {
   try {
-    const { id } = req.params;
-    const obj = req.body;
-    const result = await EmployeesService.updateEmployee(id, obj);
-    res.json(result);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    const updated = await employeesRepo.updateEmployee(req.params.id, req.body);
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
-//delete employee
-
+// DELETE /employees/:id (also remove from all shifts)
 router.delete('/:id', async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await EmployeesService.deleteEmployee(id);
+    await shiftsRepo.removeEmployeeFromAllShifts(req.params.id);
+    const result = await employeesRepo.deleteEmployee(req.params.id);
     res.json(result);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
-export default router
+// POST /employees/:id/assign-shift/:shiftId
+router.post('/:id/assign-shift/:shiftId', async (req, res) => {
+  try {
+    const updatedShift = await shiftsRepo.addEmployeeToShift(
+      req.params.shiftId,
+      req.params.id
+    );
+    res.json(updatedShift);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+module.exports = router;
