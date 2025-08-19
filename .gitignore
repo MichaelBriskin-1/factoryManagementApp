@@ -1,2 +1,23 @@
-mode_modules/
-.vscode/
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Env
+.env
+server/.env
+client/.env
+
+# Builds & caches
+dist/
+build/
+.cache/
+.vite/
+coverage/
+*.log
+
+# App-specific
+server/logs/
+client/dist/
