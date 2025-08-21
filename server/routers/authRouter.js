@@ -6,14 +6,12 @@ const { SECRET, verifyJWT } = require('../middlewares/auth');
 
 const router = express.Router();
 
-// POST /auth/login { username, email }
 router.post('/login', async (req, res) => {
   try {
     const { username, email } = req.body || {};
     if (!username || !email)
       return res.status(400).json({ error: 'username and email are required' });
 
-    // Verify against external API
     const { data: remoteUsers } = await loginRepo.getAllUsers();
     const match = remoteUsers.find(
       (u) => u.username === username && u.email === email

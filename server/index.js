@@ -28,15 +28,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
-// static pages placeholder (optional front-end later)
-app.use(express.static(path.join(__dirname, 'public')));
-
-
-// Auth (unprotected)
 app.use('/auth', authRouter);
 
-
-// Protected APIs: verify token, enforce daily action limits, log actions
 app.use(verifyJWT, actionsLimiter, actionLogger);
 
 
@@ -49,7 +42,6 @@ app.use('/users', usersRouter);
 app.get('/health', (req, res) => res.json({ ok: true }));
 
 
-// Error handler
 app.use((err, req, res, next) => {
 console.error(err);
 res.status(err.status || 500).json({ error: err.message || 'Server error' });
