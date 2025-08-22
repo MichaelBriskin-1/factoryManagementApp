@@ -1,4 +1,9 @@
 const express = require('express');
+// Import repositories used by this router. Without these requires the names
+// departmentsRepo, employeesRepo and shiftsRepo would be undefined at runtime.
+const departmentsRepo = require('../repositories/departmentsRepo');
+const employeesRepo = require('../repositories/employeesRepo');
+const shiftsRepo = require('../repositories/shiftsRepo');
 
 const router = express.Router();
 
