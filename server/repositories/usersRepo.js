@@ -1,30 +1,21 @@
 const User = require('../models/userModel');
 
-const getAllUsers = () => {
-  return User.find();
+async function findByUsernameOrEmail(username, email) {
+  return User.findOne({ $or: [{ username }, { email }] });
 }
 
-const getUserById = (id) => {
-  return User.findById(id);
-};
-
-const addUser = (obj) => {
-  const user = new User(obj);
-  return user.save();
+async function create({ fullName, username, email }) {
+  // Don’t accept maxActions from client; rely on schema defaults
+  const u = new User({ fullName, username, email });
+  return u.save();
 }
 
-const updateUser = (id, obj) => {
-  return User.findByIdAndUpdate(id, obj);
-}; 
-
-const deleteUser = (id) => {
-  return User.findByIdAndDelete(id);
-}        
+async function all() {
+  return User.find().lean();
+}
 
 module.exports = {
-  getAllUsers,
-  getUserById,
-  addUser,
-  updateUser,
-  deleteUser
+  findByUsernameOrEmail,
+  create,
+  all,
 };

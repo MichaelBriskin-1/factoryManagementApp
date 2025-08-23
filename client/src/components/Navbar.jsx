@@ -4,11 +4,13 @@ import { useAuth } from '../auth/AuthContext.jsx';
 export default function Navbar() {
   const { user, logout } = useAuth();
   const loc = useLocation();
-  const isLogin = loc.pathname === '/login';
+  // Hide navigation when on unauthenticated pages (landing/login)
+  const authPaths = ['/', '/login'];
+  const isAuthPage = authPaths.includes(loc.pathname);
   return (
     <nav>
       <Link to="/">ShiftForge</Link>
-      {!isLogin && (
+      {!isAuthPage && (
         <>
           <Link to="/employees">Employees</Link>
           <Link to="/departments">Departments</Link>

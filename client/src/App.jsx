@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Login from './pages/Login.jsx';
+// import Login from './pages/Login.jsx';
+import AuthLanding from './pages/AuthLanding.jsx';
 import Employees from './pages/Employees.jsx';
 import EmployeeEdit from './pages/EmployeeEdit.jsx';
 import EmployeeNew from './pages/EmployeeNew.jsx';
@@ -23,16 +24,12 @@ export default function App() {
       <Navbar />
       <div className="container">
         <Routes>
-          <Route path="/login" element={<Login />} />
+          {/* Landing page: either log in or register */}
+          <Route path="/" element={<AuthLanding />} />
+          {/* Provide /login as an alias for the landing page */}
+          <Route path="/login" element={<AuthLanding />} />
 
-          <Route
-            path="/"
-            element={
-              <Protected>
-                <Employees />
-              </Protected>
-            }
-          />
+          {/* Protected routes */}
           <Route
             path="/employees"
             element={

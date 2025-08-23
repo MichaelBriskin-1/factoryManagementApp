@@ -72,7 +72,16 @@ export default function Employees() {
                   {e.firstName} {e.lastName}
                 </Link>
               </td>
-              <td>{depMap.get(e.departmentId) || e.departmentId}</td>
+              <td>
+                {/* Show the department name as a link to the department page. */}
+                {depMap.has(e.departmentId) ? (
+                  <Link to={`/departments/${e.departmentId}`}>
+                    {depMap.get(e.departmentId)}
+                  </Link>
+                ) : (
+                  e.departmentId
+                )}
+              </td>
               <td>
                 <Link to={`/employees/${e._id}`}>
                   <button>Edit</button>
